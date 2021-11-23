@@ -1,0 +1,89 @@
+{
+  "name": "electric-app",
+  "productName": "Electric",
+  "private": true,
+  "engines": {
+    "node": ">=v16.13",
+    "npm": ">=8.1"
+  },
+  "main": "packages/main/dist/index.cjs",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "precompile": "cross-env MODE=production npm run build",
+    "compile": "electron-builder build --config electron-builder.config.js --dir --config.asar=false",
+    "compile:mac": "electron-builder build -m --config electron-builder.config.js  --config.asar=false",
+    "compile:windows": "electron-builder build -w --config electron-builder.config.js --config.asar=false",
+    "pretest": "npm run build",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "watch": "node scripts/watch.js",
+    "lint": "eslint . --ext js,ts,vue",
+    "typecheck-main": "tsc --noEmit -p packages/main/tsconfig.json",
+    "typecheck-preload": "tsc --noEmit -p packages/preload/tsconfig.json",
+    "typecheck-renderer": "vue-tsc --noEmit -p packages/renderer/tsconfig.json",
+    "typecheck": "npm run typecheck-main && npm run typecheck-preload && npm run typecheck-renderer",
+    "generate-kaseya-procedures": "node ./generate-kaseya-procedures.js",
+    "dist": "npm run generate-kaseya-procedures && npm run compile",
+    "dist:windows": "npm run generate-kaseya-procedures && npm run compile:windows",
+    "dist:mac": "npm run generate-kaseya-procedures && npm run compile:mac",
+    "dist:dir": "npm run dist --dir -c.compression=store -c.mac.identity=null"
+  },
+  "build": {
+    "appId": "com.electric.app",
+    "mac": {
+      "category": "",
+      "extendInfo": {
+        "LSMultipleInstancesProhibited": true
+      }
+    },
+    "win": {
+      "target": "msi"
+    },
+    "protocols": {
+      "name": "electric-app",
+      "schemes": [
+        "electric-app"
+      ]
+    },
+    "extraResources": [
+      "./assets/**"
+    ]
+  },
+  "browserslist": [
+    "Chrome 96"
+  ],
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged",
+    "pre-push": "npm run typecheck"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --cache --fix"
+  },
+  "devDependencies": {
+    "@types/electron-devtools-installer": "2.2.0",
+    "@types/jest": "^27.0.3",
+    "@types/node-fetch": "^2.5.12",
+    "@typescript-eslint/eslint-plugin": "5.4.0",
+    "@vitejs/plugin-vue": "1.10.0",
+    "cross-env": "7.0.3",
+    "electron": "16.0.1",
+    "electron-builder": "22.14.5",
+    "electron-devtools-installer": "3.2.0",
+    "eslint": "8.3.0",
+    "eslint-plugin-vue": "8.1.1",
+    "jest": "^27.3.1",
+    "lint-staged": "12.1.2",
+    "playwright": "1.16.3",
+    "simple-git-hooks": "2.7.0",
+    "ts-jest": "^27.0.7",
+    "typescript": "4.5.2",
+    "vite": "2.6.14",
+    "vue-tsc": "0.29.6"
+  },
+  "dependencies": {
+    "electron-updater": "4.6.2",
+    "node-fetch": "^2.6.6",
+    "vue": "3.2.22",
+    "vue-router": "4.0.12"
+  }
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScriptExport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.kaseya.com/vsa/2008/12/Scripting">
+  <Procedure name="uninstall-electric-device-user-mapping-v<%= procedureVersion %>" treePres="3" id="2053005847" folderId="413814639446239" treeFullPath="Product Engineering.UserDeviceMappingApp">
+    <Body description="">
+      <If description="">
+        <Condition name="Windows 32 or 64 Bit Check">
+          <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+        </Condition>
+        <Then>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="taskkill /IM &quot;electric.exe&quot; /F" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="System" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <Statement name="DeleteRegistryKey" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Path" value="HKEY_CLASSES_ROOT\electric-app" />
+          </Statement>
+          <Statement name="DeleteRegistryKey64" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Path" value="HKEY_CLASSES_ROOT\electric-app" />
+          </Statement>
+          <Statement name="GetVariable" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="EnumParameter" name="VariableType" value="AgentTempDirectory" />
+            <Parameter xsi:type="StringParameter" name="SourceContent" value="" />
+            <Parameter xsi:type="StringParameter" name="VariableName" value="dir" />
+          </Statement>
+          <Statement name="WriteFile" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Path" value="#dir#\electric-<%= appVersion %>.msi" />
+            <Parameter xsi:type="StringParameter" name="ManagedFile" value="VSASharedFiles\Electric\electron-app\electric-device-user-mapping-v<%= procedureVersion %>\Electric <%= appVersion %>.msi" />
+            <Parameter xsi:type="BooleanParameter" name="DeleteAfter" value="False" />
+          </Statement>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="msiexec /x #dir#\electric-<%= appVersion %>.msi /quiet /norestart" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="User" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <Statement name="DeleteFile" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Path" value="#dir#\electric-<%= appVersion %>.msi" />
+          </Statement>
+          <Statement name="Delete Directory" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Parameter1" value="%PROGRAMDATA%\Electric" />
+            <Parameter xsi:type="StringParameter" name="Parameter2" value="true" />
+          </Statement>
+        </Then>
+        <Else>
+          <Statement name="WriteScriptLogEntry" continueOnFail="false">
+            <Parameter xsi:type="StringParameter" name="Comment" value="Device Assignment only developed fot 64bit machines" />
+          </Statement>
+        </Else>
+      </If>
+    </Body>
+  </Procedure>
+</ScriptExport>

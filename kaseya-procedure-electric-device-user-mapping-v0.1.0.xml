@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScriptExport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.kaseya.com/vsa/2008/12/Scripting">
+  <Procedure name="electric-device-user-mapping-v0.1.0" treePres="3" id="522784512" folderId="413814639446239" treeFullPath="Product Engineering.UserDeviceMappingApp">
+    <Body description="">
+      <If description="">
+        <Condition name="Windows 32 or 64 Bit Check">
+          <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+        </Condition>
+        <Then>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="if not exist &quot;#vAgentConfiguration.AgentTempDir#\Electric&quot; mkdir &quot;#vAgentConfiguration.AgentTempDir#\Electric&quot;" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="System" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <If description="">
+            <Condition name="TestFile">
+              <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-0.1.0.msi" />
+              <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+              <Parameter xsi:type="StringParameter" name="Value" value="" />
+            </Condition>
+            <Then>
+              <Statement name="DeleteFile" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-0.1.0.msi" />
+              </Statement>
+            </Then>
+          </If>
+          <If description="">
+            <Condition name="TestFile">
+              <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-app.reg" />
+              <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+              <Parameter xsi:type="StringParameter" name="Value" value="" />
+            </Condition>
+            <Then>
+              <Statement name="DeleteFile" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-app.reg" />
+              </Statement>
+            </Then>
+          </If>
+          <Statement name="WriteFile" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-0.1.0.msi" />
+            <Parameter xsi:type="StringParameter" name="ManagedFile" value="VSASharedFiles\Electric\electron-app\electric-device-user-mapping-v0.1.0\Electric 0.1.0.msi" />
+            <Parameter xsi:type="BooleanParameter" name="DeleteAfter" value="False" />
+          </Statement>
+          <Statement name="WriteFile" continueOnFail="false">
+            <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-app.reg" />
+            <Parameter xsi:type="StringParameter" name="ManagedFile" value="VSASharedFiles\Electric\electron-app\electric-device-user-mapping-v0.1.0\electric-app.reg" />
+            <Parameter xsi:type="BooleanParameter" name="DeleteAfter" value="False" />
+          </Statement>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="if not exist &quot;%PROGRAMDATA%\Electric&quot; mkdir &quot;%PROGRAMDATA%\Electric&quot;" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="System" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="if not exist &quot;%PROGRAMDATA%\Electric\electric-app&quot; mkdir &quot;%PROGRAMDATA%\Electric\electric-app&quot;" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="System" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="msiexec /i #vAgentConfiguration.AgentTempDir#\Electric\electric-0.1.0.msi /qn /norestart APPLICATIONFOLDER=%PROGRAMDATA%\Electric\electric-app" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="System" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <Statement name="ExecuteShellCommand" continueOnFail="false" osType="Windows">
+            <Parameter xsi:type="StringParameter" name="Command" value="reg import #vAgentConfiguration.AgentTempDir#\Electric\electric-app.reg" />
+            <Parameter xsi:type="EnumParameter" name="ExecuteAccount" value="System" />
+            <Parameter xsi:type="BooleanParameter" name="Is64Bit" value="False" />
+          </Statement>
+          <If description="">
+            <Condition name="TestFile">
+              <Parameter xsi:type="StringParameter" name="Path" value="%PROGRAMDATA%\Electric\electric-app\resources\agentIdentifier.ini" />
+              <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+              <Parameter xsi:type="StringParameter" name="Value" value="" />
+            </Condition>
+            <Then>
+              <Statement name="Write text to file" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Parameter1" value="source_id=#vAgentConfiguration.agentGuid#" />
+                <Parameter xsi:type="StringParameter" name="Parameter2" value="%PROGRAMDATA%\Electric\electric-app\resources\agentIdentifier.ini" />
+                <Parameter xsi:type="StringParameter" name="Parameter3" value="True" />
+              </Statement>
+              <Statement name="Write text to file" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Parameter1" value="source=kaseya" />
+                <Parameter xsi:type="StringParameter" name="Parameter2" value="%PROGRAMDATA%\Electric\electric-app\resources\agentIdentifier.ini" />
+                <Parameter xsi:type="StringParameter" name="Parameter3" value="False" />
+              </Statement>
+            </Then>
+            <Else>
+              <Statement name="Write text to file" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Parameter1" value="source_id=#vAgentConfiguration.agentGuid#" />
+                <Parameter xsi:type="StringParameter" name="Parameter2" value="%PROGRAMDATA%\Electric\electric-app\resources\agentIdentifier.ini" />
+                <Parameter xsi:type="StringParameter" name="Parameter3" value="False" />
+              </Statement>
+              <Statement name="Write text to file" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Parameter1" value="source=kaseya" />
+                <Parameter xsi:type="StringParameter" name="Parameter2" value="%PROGRAMDATA%\Electric\electric-app\resources\agentIdentifier.ini" />
+                <Parameter xsi:type="StringParameter" name="Parameter3" value="False" />
+              </Statement>
+            </Else>
+          </If>
+          <If description="">
+            <Condition name="TestFile">
+              <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-0.1.0.msi" />
+              <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+              <Parameter xsi:type="StringParameter" name="Value" value="" />
+            </Condition>
+            <Then>
+              <Statement name="DeleteFile" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-0.1.0.msi" />
+              </Statement>
+            </Then>
+          </If>
+          <If description="">
+            <Condition name="TestFile">
+              <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-app.reg" />
+              <Parameter xsi:type="EnumParameter" name="Condition" value="Exists" />
+              <Parameter xsi:type="StringParameter" name="Value" value="" />
+            </Condition>
+            <Then>
+              <Statement name="DeleteFile" continueOnFail="false" osType="Windows">
+                <Parameter xsi:type="StringParameter" name="Path" value="#vAgentConfiguration.AgentTempDir#\Electric\electric-app.reg" />
+              </Statement>
+            </Then>
+          </If>
+        </Then>
+        <Else>
+          <Statement name="WriteScriptLogEntry" continueOnFail="false">
+            <Parameter xsi:type="StringParameter" name="Comment" value="Device Assignment only developed fot 64bit machines" />
+          </Statement>
+        </Else>
+      </If>
+    </Body>
+  </Procedure>
+</ScriptExport>
